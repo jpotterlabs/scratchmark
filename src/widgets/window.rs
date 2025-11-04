@@ -40,6 +40,7 @@ mod imp {
     use crate::widgets::LibrarySheet;
     use crate::widgets::PreferencesDialog;
     use crate::widgets::WindowTitle;
+    use crate::widgets::Preview;
 
     #[derive(CompositeTemplate, Default, Properties)]
     #[properties(wrapper_type = super::Window)]
@@ -87,6 +88,10 @@ mod imp {
         format_bar_toggle: TemplateChild<ToggleButton>,
         #[template_child]
         editor_sidebar_toggle: TemplateChild<ToggleButton>,
+        #[template_child]
+        preview_toggle: TemplateChild<ToggleButton>,
+        #[template_child]
+        preview: TemplateChild<Preview>,
 
         library_browser: LibraryBrowser,
         editor: RefCell<Option<Editor>>,
@@ -111,6 +116,7 @@ mod imp {
         fn class_init(klass: &mut Self::Class) {
             EditorFormatBar::ensure_type();
             WindowTitle::ensure_type();
+            Preview::ensure_type();
 
             klass.bind_template();
         }
@@ -561,6 +567,15 @@ mod imp {
                 }
             ));
 
+            self.preview_toggle.connect_active_notify(clone!(
+                #[weak(rename_to = this)]
+                self,
+                move |toggle| {
+                    use gtk::prelude::WidgetExt;
+                    this.preview.set_visible(toggle.is_active());
+                }
+            ));
+
             self.main_toolbar_view
                 .set_content(Some(&EditorPlaceholder::default()));
             self.sidebar_toolbar_view
@@ -955,7 +970,8 @@ mod imp {
                 closure_local!(
                     #[weak(rename_to = this)]
                     self,
-                    move |_: Editor| {
+                    move |editor: Editor| {
+                        this.preview.render(&editor.get_text());
                         this.set_focus_mode_active(true);
                     }
                 ),
@@ -973,11 +989,17 @@ mod imp {
 
             self.main_toolbar_view.set_content(Some(&editor));
             self.format_bar.bind_editor(Some(editor.clone()));
-            self.editor.replace(Some(editor));
+            self.editor.replace(Some(editor.clone()));
             self.library_browser.set_selected_sheet(Some(path));
             self.editor_actions_set_enabled(true);
             self.update_window_title();
             self.update_toolbar_style();
+
+            let editor_vadjustment = editor.get_vadjustment();
+            let preview_vadjustment = self.preview.get_vadjustment();
+            editor_vadjustment.connect_value_changed(move |adj| {
+                preview_vadjustment.set_value(adj.value());
+            });
         }
 
         fn trash_folder(&self, folder: LibraryFolder) {

@@ -489,6 +489,17 @@ impl Editor {
         self.imp().document_stats_data.get()
     }
 
+    pub fn get_text(&self) -> String {
+        let buffer = self.imp().source_view.buffer();
+        let start = buffer.start_iter();
+        let end = buffer.end_iter();
+        buffer.text(&start, &end, true).to_string()
+    }
+
+    pub fn get_vadjustment(&self) -> gtk::Adjustment {
+        self.imp().source_view.vadjustment().expect("vadjustment not found")
+    }
+
     fn refresh_document_stats(&self, buffer: &Buffer) {
         let imp = self.imp();
         let stats = DocumentStatsData::from_buffer(buffer);

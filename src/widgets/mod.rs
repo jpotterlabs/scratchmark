@@ -14,6 +14,7 @@ mod library_sheet;
 mod preferences_dialog;
 mod window;
 mod window_title;
+mod preview;
 
 pub use editor::Editor;
 pub use editor_doc_stats::EditorDocStats;
@@ -31,3 +32,4 @@ pub use library_sheet::LibrarySheet;
 pub use preferences_dialog::PreferencesDialog;
 pub use window::Window;
 pub use window_title::WindowTitle;
+pub use preview::Preview;

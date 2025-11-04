@@ -2,7 +2,6 @@
 mod imp {
     use adw::subclass::prelude::*;
     use gtk::glib;
-    use gtk::prelude::*;
     use gtk::{Label, ScrolledWindow};
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
@@ -54,7 +53,6 @@ mod imp {
 
 use adw::subclass::prelude::*;
 use gtk::glib;
-use gtk::prelude::*;
 
 glib::wrapper! {
     pub struct Preview(ObjectSubclass<imp::Preview>)

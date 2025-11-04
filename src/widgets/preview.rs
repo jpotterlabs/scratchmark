@@ -3,7 +3,6 @@ mod imp {
     use adw::subclass::prelude::*;
     use gtk::glib;
     use gtk::prelude::*;
-    use gtk::subclass::prelude::*;
     use gtk::{Label, ScrolledWindow};
 
     #[derive(Debug, Default, gtk::CompositeTemplate)]
@@ -22,7 +21,7 @@ mod imp {
                   </object>
                 </property>
               </object>
-            </property>
+            </child>
           </template>
         </interface>
     ")]
